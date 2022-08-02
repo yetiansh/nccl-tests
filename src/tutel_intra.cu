@@ -25,7 +25,7 @@ void print_line_header (size_t size, size_t count, const char *typeName, size_t 
   PRINT("%12li  %12li  %8s  %6s", size, count, typeName, opName);
 }
 
-testResult_t TutelIntraStageGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks, int rank) {
+testResult_t TutelIntraStageGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks) {
   *sendcount = (count/nranks)*nranks;
   *recvcount = (count/nranks)*nranks;
   *sendInplaceOffset = 0;
