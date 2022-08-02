@@ -83,7 +83,7 @@ build: ${BIN_FILES}
 clean:
 	rm -rf ${DST_DIR}
 
-${DST_DIR}/%.o: %.cu common.h
+${DST_DIR}/%.o: %.cu common.h stride_copy.h
 	@printf "Compiling  %-35s > %s\n" $< $@
 	@mkdir -p ${DST_DIR}
 	$(NVCC) -o $@ $(NVCUFLAGS) -c $<
