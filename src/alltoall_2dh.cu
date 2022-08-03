@@ -79,8 +79,6 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
   NCCLCHECK(ncclCommCuDevice(comm, &local_rank));
   size_t rankOffset = count * wordSize(type);
   if (count == 0) return testSuccess;
-  PRINT("NRANKS %d\n", nRanks);
-//   PRINT("RUN COLL send count %ld local_size %d\n", count, local_size);
 
 #if NCCL_MAJOR < 2 || NCCL_MINOR < 7
   printf("NCCL 2.7 or later is needed for alltoall. This test was compiled with %d.%d.\n", NCCL_MAJOR, NCCL_MINOR);
@@ -96,7 +94,6 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
   int nnodes = nRanks / local_size;
   if (!(local_size == 1 || nnodes == 1)) {
     int node_rank = rank / local_size;
-    PRINT("node rank %d\n", node_rank);
 
     size_t slice_size = count * wordSize(type) / nRanks;
     size_t slice_size_uint4 = slice_size / sizeof(uint4);
