@@ -41,7 +41,6 @@ testResult_t AlltoAll2DHInitData(struct threadArgs* args, ncclDataType_t type, n
 
   CUDACHECK(cudaOccupancyMaxPotentialBlockSize(&mem_stride_copy_gridsize, &mem_stride_copy_blocksize, memStrideCopyUInt4Kernel));
   CUDACHECK(cudaGetDeviceCount(&local_size));
-  local_size = 8;
 
   for (int i=0; i<args->nGpus; i++) {
     char* str = getenv("NCCL_TESTS_DEVICE\n");
@@ -71,8 +70,7 @@ void AlltoAll2DHGetBw(size_t count, int typesize, double sec, double* algBw, dou
 }
 
 testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, ncclDataType_t type, ncclRedOp_t op, int root, ncclComm_t comm, cudaStream_t stream) {
-  // CUDACHECK(cudaGetDeviceCount(&local_size));
-  local_size = 8;
+  CUDACHECK(cudaGetDeviceCount(&local_size));
   int nRanks;
   NCCLCHECK(ncclCommCount(comm, &nRanks));
   int rank;
