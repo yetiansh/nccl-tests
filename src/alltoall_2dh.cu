@@ -99,19 +99,19 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
     size_t slice_size = count * wordSize(type) / nRanks;
     size_t slice_size_uint4 = slice_size / sizeof(uint4);
     int local_size_ = 1;
+    int nnodes_ = 16;
     // phase 0. per-gpu (ngpus) stride copy
     if (slice_size < sizeof(uint4)) {
       memStrideCopyCharKernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (char*)scratch_buff, (char*)sendbuff, slice_size, local_size_, nnodes);
+        (char*)scratch_buff, (char*)sendbuff, slice_size, local_size_, nnodes_);
     } else {
       memStrideCopyUInt4Kernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, local_size_, nnodes);
+        (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, local_size_, nnodes_);
     }
 
     // phase 1. intra-node alltoall
     NCCLCHECK(ncclGroupStart());
     for (int g = 0; g < local_size; g++) {
-        PRINT("g %d\n", g);
       NCCLCHECK(ncclSend(((char*)scratch_buff) + g * nnodes * slice_size, nnodes * slice_size, ncclInt8, g + node_rank * local_size, comm, stream));
       NCCLCHECK(ncclRecv(((char*)sendbuff) + g * nnodes * slice_size, nnodes * slice_size, ncclInt8, g + node_rank * local_size, comm, stream));
     }
@@ -120,10 +120,10 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
     // phase 2. per-gpu (nnodes) stride copy
     if (slice_size < sizeof(uint4)) {
       memStrideCopyCharKernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (char*)scratch_buff, (char*)sendbuff, slice_size, nnodes, local_size_);
+        (char*)scratch_buff, (char*)sendbuff, slice_size, nnodes_, local_size_);
     } else {
       memStrideCopyUInt4Kernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, nnodes, local_size_);
+        (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, nnodes_, local_size_);
     }
 
     // phase 3. inter-node alltoall
