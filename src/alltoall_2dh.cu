@@ -21,8 +21,8 @@ void print_header() {
         "(us)", "(GB/s)", "(GB/s)", "", "(us)", "(GB/s)", "(GB/s)", "");
 }
 
-void print_line_header (size_t size, size_t count, const char *typeName, size_t wordSize, const char *opName, int root) {
-  printf("%12li  %12li  %8s  %6s", size, count, typeName, opName);
+void print_line_header (size_t size, size_t count, const char *typeName, const char *opName, int root) {
+  PRINT("%12li  %12li  %8s  %6s", size, count, typeName, opName);
 }
 
 void AlltoAll2DHGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks) {
