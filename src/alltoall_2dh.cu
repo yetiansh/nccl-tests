@@ -95,6 +95,7 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
   int nnodes = nRanks / local_size;
   if (!(local_size == 1 || nnodes == 1)) {
     int node_rank = rank / local_size;
+    PRINT("node rank %d\n", node_rank);
 
     size_t slice_size = count * wordSize(type) / nRanks;
     size_t slice_size_uint4 = slice_size / sizeof(uint4);
