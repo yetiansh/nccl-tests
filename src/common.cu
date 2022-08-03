@@ -467,25 +467,20 @@ testResult_t CheckData(struct threadArgs* args, ncclDataType_t type, ncclRedOp_t
 }
 
 testResult_t testStreamSynchronize(int ngpus, cudaStream_t* streams, ncclComm_t* comms) {
-  PRINT("start test stream sync\n");
   cudaError_t cudaErr;
   int remaining = ngpus;
   int* done = (int*)malloc(sizeof(int)*ngpus);
   memset(done, 0, sizeof(int)*ngpus);
-  PRINT("1\n");
   while (remaining) {
    int idle = 1;
    for (int i=0; i<ngpus; i++) {
      if (done[i]) continue;
      cudaErr = cudaStreamQuery(streams[i]); // here always fails. Look at this,
      if (cudaErr == cudaSuccess) {
-       PRINT("6\n");
        done[i] = 1;
        remaining--;
        idle = 0;
        continue;
-    //  } else {
-      //  cudaStreamDestroy(streams[i]);
      }
 
      if (cudaErr != cudaErrorNotReady) CUDACHECK(cudaErr);
@@ -512,9 +507,7 @@ testResult_t testStreamSynchronize(int ngpus, cudaStream_t* streams, ncclComm_t*
      pthread_yield();
    } 
   }
-  PRINT("20\n");
   free(done);
-  PRINT("21\n");
   return testSuccess;
 }
 
