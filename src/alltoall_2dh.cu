@@ -94,7 +94,7 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
   int nnodes = nRanks / local_size;
   if (!(local_size == 1 || nnodes == 1)) {
     int node_rank = rank / local_size;
-    printf("local size %d, node rank %d, local_rank %d\n", local_size, node_rank, local_rank);
+    // printf("local size %d, node rank %d, local_rank %d\n", local_size, node_rank, local_rank);
 
     size_t slice_size = count * wordSize(type) / nRanks;
     size_t slice_size_uint4 = slice_size / sizeof(uint4);
@@ -111,6 +111,7 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
     // phase 1. intra-node alltoall
     NCCLCHECK(ncclGroupStart());
     for (int g = 0; g < local_size; g++) {
+        PRINT("g %d\n", g);
       NCCLCHECK(ncclSend(((char*)scratch_buff) + g * nnodes * slice_size, nnodes * slice_size, ncclInt8, g + node_rank * local_size, comm, stream));
       NCCLCHECK(ncclRecv(((char*)sendbuff) + g * nnodes * slice_size, nnodes * slice_size, ncclInt8, g + node_rank * local_size, comm, stream));
     }
@@ -175,6 +176,7 @@ testResult_t AlltoAll2DHRunTest(struct threadArgs* args, int root, ncclDataType_
     run_typenames = test_typenames;
   }
 
+    PRINT("max bytes %ld\n", args->maxbytes);
   CUDACHECK(cudaMalloc(&scratch_buff, args->maxbytes));
 
   for (int i=0; i<type_count; i++) {
