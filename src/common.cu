@@ -467,45 +467,69 @@ testResult_t CheckData(struct threadArgs* args, ncclDataType_t type, ncclRedOp_t
 }
 
 testResult_t testStreamSynchronize(int ngpus, cudaStream_t* streams, ncclComm_t* comms) {
+  PRINT("start test stream sync\n");
   cudaError_t cudaErr;
   int remaining = ngpus;
   int* done = (int*)malloc(sizeof(int)*ngpus);
   memset(done, 0, sizeof(int)*ngpus);
+  PRINT("1\n");
   while (remaining) {
+    PRINT("2\n");
    int idle = 1;
    for (int i=0; i<ngpus; i++) {
+     PRINT("3\n");
      if (done[i]) continue;
-
+      PRINT("4\n");
      cudaErr = cudaStreamQuery(streams[i]);
+     PRINT("5\n");
      if (cudaErr == cudaSuccess) {
+       PRINT("6\n");
        done[i] = 1;
        remaining--;
        idle = 0;
        continue;
      }
+     PRINT("7\n");
 
      if (cudaErr != cudaErrorNotReady) CUDACHECK(cudaErr);
-
+    
+    PRINT("8\n");
 #if NCCL_VERSION_CODE >= NCCL_VERSION(2,4,0)
      if (test_ncclVersion >= NCCL_VERSION(2,4,0) && comms) {
+       PRINT("9\n");
        ncclResult_t ncclAsyncErr;
        NCCLCHECK(ncclCommGetAsyncError(comms[i], &ncclAsyncErr));
+       PRINT("10\n");
        if (ncclAsyncErr != ncclSuccess) {
+         PRINT("11\n");
          // An asynchronous error happened. Stop the operation and destroy
          // the communicator
-         for (int i=0; i<ngpus; i++)
+         for (int i=0; i<ngpus; i++) {
+           PRINT("12\n");
            NCCLCHECK(ncclCommAbort(comms[i]));
+         }
          // Abort the perf test
          NCCLCHECK(ncclAsyncErr);
        }
+       PRINT("13\n");
      }
+     PRINT("14\n");
 #endif
+      PRINT("15\n");
    }
+   PRINT("16\n");
 
    // We might want to let other threads (including NCCL threads) use the CPU.
-   if (idle) pthread_yield();
+   if (idle) {
+     PRINT("17\n");
+     pthread_yield();
+     PRINT("18\n");
+   } 
+   PRINT("19\n");
   }
+  PRINT("20\n");
   free(done);
+  PRINT("21\n");
   return testSuccess;
 }
 
