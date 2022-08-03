@@ -73,7 +73,7 @@ testResult_t TutelInterStageRunColl(void* sendbuff, void* recvbuff, size_t count
   NCCLCHECK(ncclCommCount(comm, &nRanks));
   int rank;
   NCCLCHECK(ncclCommUserRank(comm, &rank));
-  // int local_rank = rank % local_size;
+  int local_rank;
   NCCLCHECK(ncclCommCuDevice(comm, &local_rank));
   size_t rankOffset = count * wordSize(type);
   if (count == 0) return testSuccess;
