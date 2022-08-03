@@ -25,13 +25,12 @@ void print_line_header (size_t size, size_t count, const char *typeName, size_t 
   PRINT("%12li  %12li  %8s  %6s", size, count, typeName, opName);
 }
 
-testResult_t TutelInterStageGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks) {
+void TutelInterStageGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks) {
   *sendcount = (count/nranks)*nranks;
   *recvcount = (count/nranks)*nranks;
   *sendInplaceOffset = 0;
   *recvInplaceOffset = 0;
   *paramcount = count/nranks;
-  return testSuccess;
 }
 
 testResult_t TutelInterStageInitData(struct threadArgs* args, ncclDataType_t type, ncclRedOp_t op, int root, int rep, int in_place) {
@@ -144,10 +143,9 @@ testResult_t TutelInterStageRunTest(struct threadArgs* args, int root, ncclDataT
   return testSuccess;
 }
 
-testResult_t TutelInterStageGetBuffSize(size_t *sendcount, size_t *recvcount, size_t count, int nranks, int rank) {
+void TutelInterStageGetBuffSize(size_t *sendcount, size_t *recvcount, size_t count, int nranks) {
   size_t paramcount, sendInplaceOffset, recvInplaceOffset;
-  TESTCHECK(TutelInterStageGetCollByteCount(sendcount, recvcount, &paramcount, &sendInplaceOffset, &recvInplaceOffset, count, nranks, rank));
-  return testSuccess;
+  TutelInterStageGetCollByteCount(sendcount, recvcount, &paramcount, &sendInplaceOffset, &recvInplaceOffset, count, nranks);
 }
 
 struct testEngine TutelInterStageEngine = {

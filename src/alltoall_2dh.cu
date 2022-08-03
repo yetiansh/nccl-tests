@@ -25,13 +25,12 @@ void print_line_header (size_t size, size_t count, const char *typeName, size_t 
   printf("%12li  %12li  %8s  %6s", size, count, typeName, opName);
 }
 
-testResult_t AlltoAll2DHGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks) {
+void AlltoAll2DHGetCollByteCount(size_t *sendcount, size_t *recvcount, size_t *paramcount, size_t *sendInplaceOffset, size_t *recvInplaceOffset, size_t count, int nranks) {
   *sendcount = (count/nranks)*nranks;
   *recvcount = (count/nranks)*nranks;
   *sendInplaceOffset = 0;
   *recvInplaceOffset = 0;
   *paramcount = count/nranks;
-  return testSuccess;
 }
 
 testResult_t AlltoAll2DHInitData(struct threadArgs* args, ncclDataType_t type, ncclRedOp_t op, int root, int rep, int in_place) {
@@ -158,10 +157,9 @@ struct testColl alltoAll2DHTest = {
   AlltoAll2DHRunColl
 };
 
-testResult_t AlltoAll2DHGetBuffSize(size_t *sendcount, size_t *recvcount, size_t count, int nranks, int rank) {
+void AlltoAll2DHGetBuffSize(size_t *sendcount, size_t *recvcount, size_t count, int nranks) {
   size_t paramcount, sendInplaceOffset, recvInplaceOffset;
-  TESTCHECK(AlltoAll2DHGetCollByteCount(sendcount, recvcount, &paramcount, &sendInplaceOffset, &recvInplaceOffset, count, nranks, rank));
-  return testSuccess;
+  AlltoAll2DHGetCollByteCount(sendcount, recvcount, &paramcount, &sendInplaceOffset, &recvInplaceOffset, count, nranks);
 }
 
 testResult_t AlltoAll2DHRunTest(struct threadArgs* args, int root, ncclDataType_t type, const char* typeName, ncclRedOp_t op, const char* opName) {
