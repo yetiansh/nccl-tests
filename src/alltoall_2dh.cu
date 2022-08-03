@@ -133,7 +133,6 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
       NCCLCHECK(ncclRecv(((char*)sendbuff) + n * local_size * slice_size, local_size * slice_size, ncclInt8, n * local_size + local_rank, comm, stream));
     }
     NCCLCHECK(ncclGroupEnd());
-    local_size = 1;
     return testSuccess;
   } else {
     NCCLCHECK(ncclGroupStart());
