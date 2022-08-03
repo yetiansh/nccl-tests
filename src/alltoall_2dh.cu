@@ -101,13 +101,13 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
     int local_size_ = 1;
     int nnodes_ = 16;
     // phase 0. per-gpu (ngpus) stride copy
-    if (slice_size < sizeof(uint4)) {
-      memStrideCopyCharKernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (char*)scratch_buff, (char*)sendbuff, slice_size, local_size_, nnodes_);
-    } else {
-      memStrideCopyUInt4Kernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, local_size_, nnodes_);
-    }
+    // if (slice_size < sizeof(uint4)) {
+    //   memStrideCopyCharKernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
+    //     (char*)scratch_buff, (char*)sendbuff, slice_size, local_size_, nnodes_);
+    // } else {
+    //   memStrideCopyUInt4Kernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
+    //     (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, local_size_, nnodes_);
+    // }
 
     // phase 1. intra-node alltoall
     NCCLCHECK(ncclGroupStart());
@@ -118,13 +118,13 @@ testResult_t AlltoAll2DHRunColl(void* sendbuff, void* recvbuff, size_t count, nc
     NCCLCHECK(ncclGroupEnd());
 
     // phase 2. per-gpu (nnodes) stride copy
-    if (slice_size < sizeof(uint4)) {
-      memStrideCopyCharKernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (char*)scratch_buff, (char*)sendbuff, slice_size, nnodes_, local_size_);
-    } else {
-      memStrideCopyUInt4Kernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
-        (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, nnodes_, local_size_);
-    }
+    // if (slice_size < sizeof(uint4)) {
+    //   memStrideCopyCharKernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
+    //     (char*)scratch_buff, (char*)sendbuff, slice_size, nnodes_, local_size_);
+    // } else {
+    //   memStrideCopyUInt4Kernel<<<mem_stride_copy_gridsize, mem_stride_copy_blocksize, 0, stream>>>(
+    //     (uint4*)scratch_buff, (uint4*)sendbuff, slice_size_uint4, nnodes_, local_size_);
+    // }
 
     // phase 3. inter-node alltoall
      NCCLCHECK(ncclGroupStart());
