@@ -73,11 +73,12 @@ testResult_t TutelInterStageRunColl(void* sendbuff, void* recvbuff, size_t count
   NCCLCHECK(ncclCommCount(comm, &nRanks));
   int rank;
   NCCLCHECK(ncclCommUserRank(comm, &rank));
-  int local_rank = rank % local_size;
-  // NCCLCHECK(ncclCommCuDevice(comm, &local_rank));
+  // int local_rank = rank % local_size;
+  NCCLCHECK(ncclCommCuDevice(comm, &local_rank));
   size_t rankOffset = count * wordSize(type);
   if (count == 0) return testSuccess;
 
+  PRINT("local size %d, local rank %d\n", local_size, local_rank);
 #if NCCL_MAJOR < 2 || NCCL_MINOR < 7
   printf("NCCL 2.7 or later is needed for alltoall. This test was compiled with %d.%d.\n", NCCL_MAJOR, NCCL_MINOR);
   return testNcclError;
